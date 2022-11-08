@@ -1,0 +1,124 @@
+version: '3.8'
+
+#volumes:
+#  vol-emqx-data:
+#    name: foo-emqx-data
+#  vol-emqx-etc:
+#    name: foo-emqx-etc
+#  vol-emqx-log:
+#    name: foo-emqx-log
+
+services:
+
+  mongo:
+    container_name: mongo
+    image: mongo:5.0
+    restart: always
+    environment:
+      TZ: "America/Bogota"
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "SGAIoT776120"
+    volumes:
+      - ./mongodata:/data/db
+    ports:
+      - 27017:27017
+      
+  emqx:
+    container_name: emqx
+    image: emqx/emqx:4.4.9
+    restart: always
+    ports:
+      - 18083:18083
+      - 18084:18084
+      - 1883:1883
+      - 8883:8883
+      - 8083:8083
+      - 8084:8084
+      - 8085:8081
+
+#    volumes:
+#      - vol-emqx-data:/opt/emqx/data
+#      - vol-emqx-etc:/opt/emqx/etc
+#      - vol-emqx-log:/opt/emqx/log
+
+    links:
+      - mongo
+
+    environment:
+
+      EMQX_NAME: SGAIoT
+      EMQX_HOST: 127.0.0.1
+
+      TZ: "America/Bogota"
+
+      # DEFAULT DASH PASS
+      EMQX_DASHBOARD__DEFAULT_USER__PASSWORD: "SGAIoT776120"
+
+      EMQX_ALLOW_ANONYMOUS: "false"
+      EMQX_NOMATCH: "deny"
+
+      # MONGO CONNECTION
+      EMQX_AUTH__MONGO__TYPE: single
+      EMQX_AUTH__MONGO__TOPOLOGY__POOL_SIZE: 1
+      EMQX_AUTH__MONGO__TOPOLOGY__MAX_OVERFLOW: 0
+
+      EMQX_AUTH__MONGO__SERVER: "mongo:27017"
+      EMQX_AUTH__MONGO__POOL: 8
+
+      EMQX_AUTH__MONGO__LOGIN: "admin"
+      EMQX_AUTH__MONGO__PASSWORD: "SGAIoT776120"
+      EMQX_AUTH__MONGO__AUTH_SOURCE: admin
+
+      EMQX_AUTH__MONGO__DATABASE: "SGAIoT"
+      EMQX_AUTH__MONGO__AUTH_QUERY__COLLECTION: "emqxauthrules"
+
+      EMQX_AUTH__MONGO__SUPER_QUERY__COLLECTION: "emqxauthrules"
+      EMQX_AUTH__MONGO__SUPER_QUERY__SUPER_FIELD: "is_superuser"
+      EMQX_AUTH__MONGO__SUPER_QUERY__SELECTOR: "username=%u"
+      EMQX_AUTH__MONGO__SUPER_QUERY: "off"
+
+      EMQX_AUTH__MONGO__AUTH_QUERY__PASSWORD_HASH: plain
+      EMQX_AUTH__MONGO__AUTH_QUERY__PASSWORD_FIELD: "password"
+      EMQX_AUTH__MONGO__AUTH_QUERY__SELECTOR: "username=%u"
+
+      # DEFAULT DASH PASS
+
+      ## Maximum number of concurrent MQTT/SSL connections. 8883
+      EMQX_LISTENER__SSL__EXTERNAL__MAX_CONNECTIONS: 102400
+      ## Maximum MQTT/SSL connections per second.
+      EMQX_LISTENER__SSL__EXTERNAL__MAX_CONN_RATE: 500
+      ## Maximum number of concurrent MQTT/TCP connections. 1883
+      EMQX_LISTENER__TCP__EXTERNAL__MAX_CONNECTIONS: 102400
+      ## Maximum external connections per second.
+      EMQX_LISTENER__TCP__EXTERNAL__MAX_CONN_RATE: 1000
+      ## Maximum number of concurrent MQTT/TCP connections. 11883
+      EMQX_LISTENER__TCP__INTERNAL__MAX_CONNECTIONS: 102400
+      ## Maximum internal connections per second.
+      EMQX_LISTENER__TCP__INTERNAL__MAX_CONN_RATE: 1000
+      ## Maximum number of concurrent MQTT/WebSocket connections. 8083
+      EMQX_LISTENER__WS__EXTERNAL__MAX_CONNECTIONS: 102400
+      ## Maximum MQTT/WebSocket connections per second.
+      EMQX_LISTENER__WS__EXTERNAL__MAX_CONN_RATE: 1000
+      ## Maximum number of concurrent MQTT/Webwocket/SSL connections. 8084
+      EMQX_LISTENER__WSS__EXTERNAL__MAX_CONNECTIONS: 102400
+      ## Maximum MQTT/WebSocket/SSL connections per second.
+      EMQX_LISTENER__WSS__EXTERNAL__MAX_CONN_RATE: 1000
+      ## The acceptor pool for external Dashboard HTTP listener. 18083
+      EMQX_DASHBOARD__LISTENER__HTTP__ACCEPTORS: 4
+      ## Maximum number of concurrent Dashboard HTTP connections.
+      EMQX_DASHBOARD__LISTENER__HTTP__MAX_CLIENTS: 512
+      ## HTTP Listener 8081
+      EMQX_MANAGEMENT__LISTENER__HTTP__ACCEPTORS: 2
+      EMQX_MANAGEMENT__LISTENER__HTTP__MAX_CLIENTS: 512
+      EMQX_MANAGEMENT__LISTENER__HTTP__BACKLOG: 512
+
+      EMQX_LOADED_PLUGINS: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_mongo"
+
+
+      ## Enable ACL query.
+      #Access control list
+      EMQX_AUTH__MONGO__ACL_QUERY: "on"
+      EMQX_AUTH__MONGO__ACL_QUERY__COLLECTION: "emqxauthrules"
+      EMQX_AUTH__MONGO__ACL_QUERY__SELECTOR: "username=%u"
+
+      EMQX_LOADED_PLUGINS: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard, emqx_auth_mongo"
