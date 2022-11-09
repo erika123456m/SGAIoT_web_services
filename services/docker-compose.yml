@@ -44,6 +44,9 @@ services:
     links:
       - mongo
 
+    extra_hosts:
+      - "localhost:192.168.20.37" # IP de la maquina donde se ejecuta el contenedor
+
     environment:
 
       EMQX_NAME: SGAIoT
@@ -53,6 +56,9 @@ services:
 
       # DEFAULT DASH PASS
       EMQX_DASHBOARD__DEFAULT_USER__PASSWORD: "SGAIoT776120"
+
+      # DEFAULT APP SECRET
+      EMQX_MANAGEMENT__DEFAULT_APPLICATION__SECRET: "emqxsecret"
 
       EMQX_ALLOW_ANONYMOUS: "false"
       EMQX_NOMATCH: "deny"
@@ -111,9 +117,6 @@ services:
       EMQX_MANAGEMENT__LISTENER__HTTP__ACCEPTORS: 2
       EMQX_MANAGEMENT__LISTENER__HTTP__MAX_CLIENTS: 512
       EMQX_MANAGEMENT__LISTENER__HTTP__BACKLOG: 512
-
-      EMQX_LOADED_PLUGINS: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_mongo"
-
 
       ## Enable ACL query.
       #Access control list
