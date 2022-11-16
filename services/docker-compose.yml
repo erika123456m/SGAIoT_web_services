@@ -8,6 +8,8 @@ volumes:
   vol-emqx-log:
     name: foo-emqx-log
 #
+
+
 services:
   mongo:
     container_name: mongo
@@ -37,6 +39,7 @@ services:
       - vol-emqx-data:/opt/emqx/data
     #   - vol-emqx-etc:/opt/emqx/etc
       - vol-emqx-log:/opt/emqx/log
+      -             :/app/index.js
     #
 
     links:
@@ -72,7 +75,7 @@ services:
       EMQX_AUTH__MONGO__PASSWORD: "${MONGO_PASSWORD}"
       EMQX_AUTH__MONGO__AUTH_SOURCE: admin
 
-      EMQX_AUTH__MONGO__DATABASE: "SGAIoT"
+      EMQX_AUTH__MONGO__DATABASE: "ioticos_god_level"
       EMQX_AUTH__MONGO__AUTH_QUERY__COLLECTION: "emqxauthrules"
 
       EMQX_AUTH__MONGO__SUPER_QUERY__COLLECTION: "emqxauthrules"
@@ -84,37 +87,6 @@ services:
       EMQX_AUTH__MONGO__AUTH_QUERY__PASSWORD_FIELD: "password"
       EMQX_AUTH__MONGO__AUTH_QUERY__SELECTOR: "username=%u"
 
-      # DEFAULT DASH PASS
-
-      ## Maximum number of concurrent MQTT/SSL connections. 8883
-      EMQX_LISTENER__SSL__EXTERNAL__MAX_CONNECTIONS: 102400
-      ## Maximum MQTT/SSL connections per second.
-      EMQX_LISTENER__SSL__EXTERNAL__MAX_CONN_RATE: 500
-      ## Maximum number of concurrent MQTT/TCP connections. 1883
-      EMQX_LISTENER__TCP__EXTERNAL__MAX_CONNECTIONS: 1000
-      ## Maximum external connections per second.
-      EMQX_LISTENER__TCP__EXTERNAL__MAX_CONN_RATE: 1000
-      ## Maximum number of concurrent MQTT/TCP connections. 11883
-      EMQX_LISTENER__TCP__INTERNAL__MAX_CONNECTIONS: 102400
-      ## Maximum internal connections per second.
-      EMQX_LISTENER__TCP__INTERNAL__MAX_CONN_RATE: 1000
-      ## Maximum number of concurrent MQTT/WebSocket connections. 8083
-      EMQX_LISTENER__WS__EXTERNAL__MAX_CONNECTIONS: 102400
-      ## Maximum MQTT/WebSocket connections per second.
-      EMQX_LISTENER__WS__EXTERNAL__MAX_CONN_RATE: 1000
-      ## Maximum number of concurrent MQTT/Webwocket/SSL connections. 8084
-      EMQX_LISTENER__WSS__EXTERNAL__MAX_CONNECTIONS: 102400
-      ## Maximum MQTT/WebSocket/SSL connections per second.
-      EMQX_LISTENER__WSS__EXTERNAL__MAX_CONN_RATE: 1000
-      ## The acceptor pool for external Dashboard HTTP listener. 18083
-      EMQX_DASHBOARD__LISTENER__HTTP__ACCEPTORS: 4
-      ## Maximum number of concurrent Dashboard HTTP connections.
-      EMQX_DASHBOARD__LISTENER__HTTP__MAX_CLIENTS: 512
-      ## HTTP Listener 8081
-      EMQX_MANAGEMENT__LISTENER__HTTP__ACCEPTORS: 2
-      EMQX_MANAGEMENT__LISTENER__HTTP__MAX_CLIENTS: 512
-      EMQX_MANAGEMENT__LISTENER__HTTP__BACKLOG: 512
-
       ## Enable ACL query.
       #Access control list
       EMQX_AUTH__MONGO__ACL_QUERY: "on"
@@ -122,3 +94,5 @@ services:
       EMQX_AUTH__MONGO__ACL_QUERY__SELECTOR: "username=%u"
 
       EMQX_LOADED_PLUGINS: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_mongo"
+
+      EMQX_LISTENER__TCP__EXTERNAL__MAX_CONNECTIONS: 1000
